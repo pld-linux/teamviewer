@@ -35,9 +35,7 @@ buy a license for commercial use, visit the webpage.
 install -p %{SOURCE1} teamviewer
 
 ver=$(strings ".wine/drive_c/Program Files/TeamViewer/Version5/TeamViewer.exe" | grep %{version}.%{buildid})
-if [ -z "$ver" ]; then
-	exit 1
-fi
+test "$ver" = "%{version}.%{buildid}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
