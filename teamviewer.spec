@@ -1,7 +1,7 @@
 # TODO
 # - use system wine (bundles unmodified wine 1.1.41)
 %define		buildid	8888
-%define		rel		0.1
+%define		rel		0.2
 Summary:	TeamViewer Remote Control Application
 Name:		teamviewer
 Version:	5.0
