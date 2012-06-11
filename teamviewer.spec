@@ -1,16 +1,14 @@
 # TODO
 # - use system wine (bundles unmodified wine 1.1.41)
-%define		buildid	9224
-%define		rel		0.2
 Summary:	TeamViewer Remote Control Application
 Name:		teamviewer
-Version:	6.0
-Release:	%{buildid}.%{rel}
+Version:	6.0.9258
+Release:	0.1
 License:	Proprietary; includes substantial Free Software components, notably the Wine Project.
 Group:		Applications/Networking
 URL:		http://www.teamviewer.com/
-Source0:	http://www.teamviewer.com/download/%{name}_linux.tar.gz
-# NoSource0-md5:	9d139992beb7d72badbbb1759f81e734
+Source0:	http://www.teamviewer.com/download/teamviewer_linux.tar.gz#/%{name}-%{version}.tgz
+# NoSource0-md5:	965385080697a37cfe32f70fcaf9ba6e
 NoSource:	0
 Source1:	%{name}.sh
 Source2:	%{name}.desktop
@@ -33,10 +31,12 @@ buy a license for commercial use, visit the webpage.
 
 %prep
 %setup -q -n %{name}6
-install -p %{SOURCE1} teamviewer.sh
+install -p %{SOURCE1} teamviewer
 
-ver=$(strings ".wine/drive_c/Program Files/TeamViewer/Version6/TeamViewer.exe" | grep %{version}.%{buildid})
-test "$ver" = "%{version}.%{buildid}"
+ver=$(strings ".wine/drive_c/Program Files/TeamViewer/Version6/TeamViewer.exe" | grep %{version})
+test "$ver" = "%{version}"
+
+mv ".wine/drive_c/Program Files/TeamViewer/Version6"/EULA_*.rtf .
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -44,8 +44,8 @@ install -d $RPM_BUILD_ROOT{%{_appdir},%{_bindir},%{_desktopdir},%{_pixmapsdir}}
 cp -a .wine $RPM_BUILD_ROOT%{_appdir}
 install -p teamviewer $RPM_BUILD_ROOT%{_appdir}/teamviewer
 ln -s %{_appdir}/teamviewer $RPM_BUILD_ROOT%{_bindir}
-cp -a %{SOURCE2} $RPM_BUILD_ROOT%{_desktopdir}
-cp -a %{SOURCE3} $RPM_BUILD_ROOT%{_pixmapsdir}
+cp -p %{SOURCE2} $RPM_BUILD_ROOT%{_desktopdir}
+cp -p %{SOURCE3} $RPM_BUILD_ROOT%{_pixmapsdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -53,8 +53,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc license_foss.txt
-%doc %lang(de) *_DE.txt
-%doc %lang(en) *_EN.txt
+%doc %lang(de) *_DE.txt EULA_de*
+%doc %lang(en) *_EN.txt EULA_en*
 %attr(755,root,root) %{_bindir}/teamviewer
 %{_desktopdir}/%{name}.desktop
 %{_pixmapsdir}/%{name}.png
@@ -64,14 +64,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(755,root,root,755)
 # XXX: you need to chown wine dir for wine to work
 %dir %{_appdir}/.wine
-%{_appdir}/.wine/*.reg
-%{_appdir}/.wine/*.ppd
+#%{_appdir}/.wine/*.reg
+#%{_appdir}/.wine/*.ppd
 %{_appdir}/.wine/bin
-%{_appdir}/.wine/dosdevices
+#%{_appdir}/.wine/dosdevices
 %{_appdir}/.wine/lib
 %{_appdir}/.wine/share
 %dir %{_appdir}/.wine/drive_c
-%{_appdir}/.wine/drive_c/windows
+#%{_appdir}/.wine/drive_c/windows
 %dir %{_appdir}/.wine/drive_c/Program?Files
 %dir %{_appdir}/.wine/drive_c/Program?Files/TeamViewer
 %dir %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6
