@@ -1,5 +1,5 @@
 #!/bin/sh
-# Launch teamviewer 6 for Linux
+# Launch teamviewer 7 for Linux
 
 rootdir=$(dirname $(readlink -f "$0"))
 
@@ -16,4 +16,4 @@ if [ -n "$TV_WINEPREFIX" ] ; then
      export WINEPREFIX="$TV_WINEPREFIX"
 fi
 
-exec "$rootdir/.wine/bin/wine" "$rootdir/.wine/drive_c/Program Files/TeamViewer/Version6/TeamViewer.exe"
+exec "$rootdir/.wine/bin/wine" "$rootdir/.wine/drive_c/Program Files/TeamViewer/Version7/TeamViewer.exe"

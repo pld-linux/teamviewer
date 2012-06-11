@@ -2,13 +2,13 @@
 # - use system wine (bundles unmodified wine 1.1.41)
 Summary:	TeamViewer Remote Control Application
 Name:		teamviewer
-Version:	6.0.9258
-Release:	0.1
+Version:	7.0.9350
+Release:	0.2
 License:	Proprietary; includes substantial Free Software components, notably the Wine Project.
 Group:		Applications/Networking
 URL:		http://www.teamviewer.com/
 Source0:	http://www.teamviewer.com/download/teamviewer_linux.tar.gz#/%{name}-%{version}.tgz
-# NoSource0-md5:	965385080697a37cfe32f70fcaf9ba6e
+# NoSource0-md5:	8dc67cd8184b520e2e1b28d2afaa95bf
 NoSource:	0
 Source1:	%{name}.sh
 Source2:	%{name}.desktop
@@ -30,13 +30,11 @@ TeamViewer is a remote control application free for private use. To
 buy a license for commercial use, visit the webpage.
 
 %prep
-%setup -q -n %{name}6
+%setup -q -n %{name}7
 install -p %{SOURCE1} teamviewer
 
-ver=$(strings ".wine/drive_c/Program Files/TeamViewer/Version6/TeamViewer.exe" | grep %{version})
-test "$ver" = "%{version}"
-
-mv ".wine/drive_c/Program Files/TeamViewer/Version6"/EULA_*.rtf .
+#ver=$(strings ".wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer.exe" | grep %{version})
+#test "$ver" = "%{version}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -53,46 +51,56 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc license_foss.txt
-%doc %lang(de) *_DE.txt EULA_de*
-%doc %lang(en) *_EN.txt EULA_en*
+%doc %lang(de) *_DE.txt
+%doc %lang(en) *_EN.txt
 %attr(755,root,root) %{_bindir}/teamviewer
 %{_desktopdir}/%{name}.desktop
 %{_pixmapsdir}/%{name}.png
 %dir %{_appdir}
 %attr(755,root,root) %{_appdir}/teamviewer
-# XXX: temp & ugly, until system wine works
-%defattr(755,root,root,755)
+
 # XXX: you need to chown wine dir for wine to work
 %dir %{_appdir}/.wine
-#%{_appdir}/.wine/*.reg
-#%{_appdir}/.wine/*.ppd
-%{_appdir}/.wine/bin
-#%{_appdir}/.wine/dosdevices
-%{_appdir}/.wine/lib
-%{_appdir}/.wine/share
+
 %dir %{_appdir}/.wine/drive_c
-#%{_appdir}/.wine/drive_c/windows
 %dir %{_appdir}/.wine/drive_c/Program?Files
 %dir %{_appdir}/.wine/drive_c/Program?Files/TeamViewer
-%dir %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6
-%attr(755,root,root) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer.exe
-%attr(755,root,root) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/tvwine.dll.so
-%lang(ar) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_ar.dll
-%lang(cs) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_cs.dll
-%lang(da) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_da.dll
-%lang(de) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_de.dll
-%lang(en) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_en.dll
-%lang(es) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_es.dll
-%lang(fi) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_fi.dll
-%lang(fr) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_fr.dll
-%lang(it) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_it.dll
-%lang(ja) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_ja.dll
-%lang(ko) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_ko.dll
-%lang(nl) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_nl.dll
-%lang(no) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_no.dll
-%lang(pl) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_pl.dll
-%lang(pt) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_pt.dll
-%lang(ru) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_ru.dll
-%lang(sv) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_sv.dll
-%lang(tr) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_tr.dll
-%lang(zh) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version6/TeamViewer_Resource_zh.dll
+%dir %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7
+%doc %lang(en) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/License.txt
+%doc %lang(de) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/Lizenz.txt
+%attr(755,root,root) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer.exe
+%attr(755,root,root) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Desktop.exe
+%{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_StaticRes.dll
+%attr(755,root,root) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/tvwine.dll.so
+%lang(bg) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_bg.dll
+%lang(cs) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_cs.dll
+%lang(da) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_da.dll
+%lang(de) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_de.dll
+%lang(en) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_en.dll
+%lang(es) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_es.dll
+%lang(fi) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_fi.dll
+%lang(fr) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_fr.dll
+%lang(hr) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_hr.dll
+%lang(hu) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_hu.dll
+%lang(id) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_id.dll
+%lang(it) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_it.dll
+%lang(lt) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_lt.dll
+%lang(nl) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_nl.dll
+%lang(no) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_no.dll
+%lang(pl) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_pl.dll
+%lang(pt) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_pt.dll
+%lang(ro) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_ro.dll
+%lang(ru) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_ru.dll
+%lang(sk) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_sk.dll
+%lang(sr) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_sr.dll
+%lang(sv) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_sv.dll
+%lang(tr) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_tr.dll
+%lang(uk) %{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7/TeamViewer_Resource_uk.dll
+
+# XXX: temp & ugly, until system wine works
+%{_appdir}/.wine/share
+
+# force +x bits
+%defattr(755,root,root,755)
+%{_appdir}/.wine/bin
+%{_appdir}/.wine/lib
