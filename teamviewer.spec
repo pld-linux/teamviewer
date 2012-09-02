@@ -2,13 +2,13 @@
 # - use system wine (bundles unmodified wine 1.1.41)
 Summary:	TeamViewer Remote Control Application
 Name:		teamviewer
-Version:	7.0.9350
-Release:	0.3
+Version:	7.0.9360
+Release:	0.1
 License:	Proprietary; includes substantial Free Software components, notably the Wine Project.
 Group:		Applications/Networking
 URL:		http://www.teamviewer.com/
-Source0:	http://www.teamviewer.com/download/teamviewer_linux.tar.gz#/%{name}-%{version}.tgz
-# NoSource0-md5:	8dc67cd8184b520e2e1b28d2afaa95bf
+Source0:	http://www.teamviewer.com/download/teamviewer_linux.tar.gz/%{name}-%{version}.tgz
+# NoSource0-md5:	cf0150e253515f1c04a4e0ae8179c0d4
 NoSource:	0
 Source1:	%{name}.sh
 Source2:	%{name}.desktop
