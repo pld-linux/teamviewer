@@ -18,9 +18,10 @@ ExclusiveArch:	%{ix86}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_appdir		%{_libdir}/%{name}
+%define		_winedir	%{_appdir}/.wine
 
 # generate no Provides from private modules
-%define		_noautoprovfiles	%{_libdir}/%{name}/.wine
+%define		_noautoprovfiles	%{_winedir}
 
 # objects already stripped
 %define		no_install_post_strip	1
@@ -43,7 +44,7 @@ mv ".wine/drive_c/Program Files/TeamViewer/Version%{mver}" TeamViewer
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_appdir},%{_bindir},%{_desktopdir},%{_pixmapsdir}}
 cp -a .wine TeamViewer/* $RPM_BUILD_ROOT%{_appdir}
-ln -s %{_appdir} $RPM_BUILD_ROOT"%{_appdir}/.wine/drive_c/Program Files/TeamViewer/Version%{mver}"
+ln -s %{_appdir} $RPM_BUILD_ROOT"%{_winedir}/drive_c/Program Files/TeamViewer/Version%{mver}"
 install -p %{name}.sh $RPM_BUILD_ROOT%{_appdir}/%{name}
 ln -s %{_appdir}/%{name} $RPM_BUILD_ROOT%{_bindir}
 cp -p %{SOURCE2} $RPM_BUILD_ROOT%{_desktopdir}
@@ -95,17 +96,17 @@ rm -rf $RPM_BUILD_ROOT
 %lang(uk) %{_appdir}/TeamViewer_Resource_uk.dll
 
 # XXX: you need to chown wine dir for wine to work
-%dir %{_appdir}/.wine
+%dir %{_winedir}
 
-%dir %{_appdir}/.wine/drive_c
-%dir %{_appdir}/.wine/drive_c/Program?Files
-%dir %{_appdir}/.wine/drive_c/Program?Files/TeamViewer
-%{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version%{mver}
+%dir %{_winedir}/drive_c
+%dir %{_winedir}/drive_c/Program?Files
+%dir %{_winedir}/drive_c/Program?Files/TeamViewer
+%{_winedir}/drive_c/Program?Files/TeamViewer/Version%{mver}
 
 # XXX: temp & ugly, until system wine works
-%{_appdir}/.wine/share
+%{_winedir}/share
 
 # force +x bits
 %defattr(755,root,root,755)
-%{_appdir}/.wine/bin
-%{_appdir}/.wine/lib
+%{_winedir}/bin
+%{_winedir}/lib
