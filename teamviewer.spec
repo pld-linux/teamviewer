@@ -1,15 +1,16 @@
 # TODO
 # - use system wine (bundles unmodified wine 1.1.41)
+%define		mver	7
 Summary:	TeamViewer Remote Control Application
 Name:		teamviewer
-Version:	7.0.9360
+Version:	%{mver}.0.9360
 Release:	0.1
 License:	Proprietary; includes substantial Free Software components, notably the Wine Project.
 Group:		Applications/Networking
-URL:		http://www.teamviewer.com/
-Source0:	http://www.teamviewer.com/download/teamviewer_linux.tar.gz/%{name}-%{version}.tgz
+Source0:	http://download.teamviewer.com/download/teamviewer_linux.tar.gz/%{name}-%{version}.tgz
 # NoSource0-md5:	cf0150e253515f1c04a4e0ae8179c0d4
 NoSource:	0
+URL:		http://www.teamviewer.com/
 Source1:	%{name}.sh
 Source2:	%{name}.desktop
 Source3:	%{name}.png
@@ -30,10 +31,10 @@ TeamViewer is a remote control application free for private use. To
 buy a license for commercial use, visit the webpage.
 
 %prep
-%setup -q -n %{name}7
+%setup -q -n %{name}%{mver}
 install -p %{SOURCE1} %{name}.sh
 
-mv ".wine/drive_c/Program Files/TeamViewer/Version7" TeamViewer
+mv ".wine/drive_c/Program Files/TeamViewer/Version%{mver}" TeamViewer
 
 #ver=$(strings "%{name}/TeamViewer.exe" | grep %{version})
 #test "$ver" = "%{version}"
@@ -42,7 +43,7 @@ mv ".wine/drive_c/Program Files/TeamViewer/Version7" TeamViewer
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_appdir},%{_bindir},%{_desktopdir},%{_pixmapsdir}}
 cp -a .wine TeamViewer/* $RPM_BUILD_ROOT%{_appdir}
-ln -s %{_appdir} $RPM_BUILD_ROOT"%{_appdir}/.wine/drive_c/Program Files/TeamViewer/Version7"
+ln -s %{_appdir} $RPM_BUILD_ROOT"%{_appdir}/.wine/drive_c/Program Files/TeamViewer/Version%{mver}"
 install -p %{name}.sh $RPM_BUILD_ROOT%{_appdir}/%{name}
 ln -s %{_appdir}/%{name} $RPM_BUILD_ROOT%{_bindir}
 cp -p %{SOURCE2} $RPM_BUILD_ROOT%{_desktopdir}
@@ -99,7 +100,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_appdir}/.wine/drive_c
 %dir %{_appdir}/.wine/drive_c/Program?Files
 %dir %{_appdir}/.wine/drive_c/Program?Files/TeamViewer
-%{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version7
+%{_appdir}/.wine/drive_c/Program?Files/TeamViewer/Version%{mver}
 
 # XXX: temp & ugly, until system wine works
 %{_appdir}/.wine/share
