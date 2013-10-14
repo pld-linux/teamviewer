@@ -1,24 +1,25 @@
 # TODO
 # - use system wine (bundles unmodified wine 1.1.41)
-%define		mver	7
+%define		mver	8
 Summary:	TeamViewer Remote Control Application
 Name:		teamviewer
-Version:	%{mver}.0.9360
-Release:	0.1
+Version:	%{mver}.0.20931
+Release:	0.3
 License:	Proprietary; includes substantial Free Software components, notably the Wine Project.
 Group:		Applications/Networking
 Source0:	http://download.teamviewer.com/download/teamviewer_linux.tar.gz/%{name}-%{version}.tgz
-# NoSource0-md5:	cf0150e253515f1c04a4e0ae8179c0d4
+# NoSource0-md5:	0b06c2ba7575c132eb2c6a6a4a41466b
 NoSource:	0
 URL:		http://www.teamviewer.com/
 Source1:	%{name}.sh
 Source2:	%{name}.desktop
+BuildRequires: sed >= 4.0
 Source3:	%{name}.png
 ExclusiveArch:	%{ix86}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_appdir		%{_libdir}/%{name}
-%define		_winedir	%{_appdir}/.wine
+%define		_winedir	%{_appdir}/wine
 
 # generate no Provides from private modules
 %define		_noautoprovfiles	%{_winedir}
@@ -35,20 +36,39 @@ buy a license for commercial use, visit the webpage.
 %setup -q -n %{name}%{mver}
 install -p %{SOURCE1} %{name}.sh
 
-mv ".wine/drive_c/Program Files/TeamViewer/Version%{mver}" TeamViewer
+ver=$(awk -F'"' '/^TV_VERSION/ {print $2}' tv_bin/script/tvw_config)
+test "$ver" = "%{version}"
 
-#ver=$(strings "%{name}/TeamViewer.exe" | grep %{version})
-#test "$ver" = "%{version}"
+# simplify %doc
+mv doc/* .
+
+# move, to simplify install
+mv tv_bin/wine .
+mv wine/drive_c/TeamViewer .
+mv tv_bin/desktop/* .
+
+# want xdg user dirs
+sed -i -e 's,TV_PKGTYPE="TAR",TV_PKGTYPE="RPM",' tv_bin/script/tvw_config
+
+# wine docs
+install -d wine-doc
+mv wine/{AUTHORS,COPYING.LIB,LICENSE,README,VERSION} wine-doc
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_appdir},%{_bindir},%{_desktopdir},%{_pixmapsdir}}
-cp -a .wine TeamViewer/* $RPM_BUILD_ROOT%{_appdir}
-ln -s %{_appdir} $RPM_BUILD_ROOT"%{_winedir}/drive_c/Program Files/TeamViewer/Version%{mver}"
+cp -a tv_bin/{TeamViewer*,teamviewerd,script} $RPM_BUILD_ROOT%{_appdir}
+cp -a TeamViewer/* $RPM_BUILD_ROOT%{_appdir}
+cp -a wine $RPM_BUILD_ROOT%{_appdir}
+ln -s %{_appdir} $RPM_BUILD_ROOT%{_winedir}/drive_c/TeamViewer
+
+cp -p %{SOURCE2} $RPM_BUILD_ROOT%{_desktopdir}
+cp -p teamviewer.png $RPM_BUILD_ROOT%{_pixmapsdir}
+
+%if 0
 install -p %{name}.sh $RPM_BUILD_ROOT%{_appdir}/%{name}
 ln -s %{_appdir}/%{name} $RPM_BUILD_ROOT%{_bindir}
-cp -p %{SOURCE2} $RPM_BUILD_ROOT%{_desktopdir}
-cp -p %{SOURCE3} $RPM_BUILD_ROOT%{_pixmapsdir}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -56,25 +76,29 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc license_foss.txt
-%doc %lang(de) *_DE.txt
-%doc %lang(en) *_EN.txt
-%attr(755,root,root) %{_bindir}/teamviewer
+%doc %lang(de) *_DE.txt Lizenz.txt
+%doc %lang(en) *_EN.txt License.txt
 %{_desktopdir}/%{name}.desktop
 %{_pixmapsdir}/%{name}.png
-%dir %{_appdir}
-%attr(755,root,root) %{_appdir}/teamviewer
+%if 0
+%attr(755,root,root) %{_bindir}/teamviewer
+%endif
 
+%dir %{_appdir}
 %doc %lang(en) %{_appdir}/License.txt
 %doc %lang(de) %{_appdir}/Lizenz.txt
+%attr(755,root,root) %{_appdir}/teamviewerd
 %attr(755,root,root) %{_appdir}/TeamViewer.exe
+%attr(755,root,root) %{_appdir}/TeamViewer
+%attr(755,root,root) %{_appdir}/TeamViewer_Desktop
 %attr(755,root,root) %{_appdir}/TeamViewer_Desktop.exe
 %{_appdir}/TeamViewer_StaticRes.dll
 %attr(755,root,root) %{_appdir}/tvwine.dll.so
+%{_appdir}/TeamViewer_Resource_en.dll
 %lang(bg) %{_appdir}/TeamViewer_Resource_bg.dll
 %lang(cs) %{_appdir}/TeamViewer_Resource_cs.dll
 %lang(da) %{_appdir}/TeamViewer_Resource_da.dll
 %lang(de) %{_appdir}/TeamViewer_Resource_de.dll
-%lang(en) %{_appdir}/TeamViewer_Resource_en.dll
 %lang(es) %{_appdir}/TeamViewer_Resource_es.dll
 %lang(fi) %{_appdir}/TeamViewer_Resource_fi.dll
 %lang(fr) %{_appdir}/TeamViewer_Resource_fr.dll
@@ -95,13 +119,17 @@ rm -rf $RPM_BUILD_ROOT
 %lang(tr) %{_appdir}/TeamViewer_Resource_tr.dll
 %lang(uk) %{_appdir}/TeamViewer_Resource_uk.dll
 
+%{_appdir}/script
+
 # XXX: you need to chown wine dir for wine to work
 %dir %{_winedir}
 
 %dir %{_winedir}/drive_c
-%dir %{_winedir}/drive_c/Program?Files
-%dir %{_winedir}/drive_c/Program?Files/TeamViewer
-%{_winedir}/drive_c/Program?Files/TeamViewer/Version%{mver}
+%dir %{_winedir}/drive_c/TeamViewer
+
+%dir %{_winedir}/drive_c/windows
+%dir %{_winedir}/drive_c/windows/system32
+%{_winedir}/drive_c/windows/system32/winemenubuilder.exe
 
 # XXX: temp & ugly, until system wine works
 %{_winedir}/share
